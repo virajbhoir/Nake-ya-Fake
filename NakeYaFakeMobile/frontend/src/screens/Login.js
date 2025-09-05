@@ -1,17 +1,28 @@
 // src/screens/Login.js
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import axios from "axios"; // 🔹 Import axios
 
 function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    // ✅ Dummy check (replace later with backend API call)
-    if (email === "test@test.com" && password === "1234") {
-      setIsLoggedIn(true); // update login state
-    } else {
-      Alert.alert("Invalid credentials!");
+  const handleLogin = async () => {
+    try {
+      // 🔹 Call backend login API
+      const res = await axios.post("http://localhost:5000/login", {
+        email,
+        password,
+      });
+
+      if (res.data.success) {
+        setIsLoggedIn(true); // ✅ Login success
+      } else {
+        Alert.alert("Login failed", res.data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Could not connect to server");
     }
   };
 
